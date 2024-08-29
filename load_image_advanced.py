@@ -91,7 +91,7 @@ class ColorAdjustment:
                 "hue_degree": ("INT", {"default": 0, "min": -360, "max": 360, "step": 1}),
                 "contrast": ("FLOAT", {"default": 1.0, "min": 0.00, "max": 10.0, "step": 0.05}),
                 "saturation": ("FLOAT", {"default": 1.0, "min": 0.00, "max": 10.0, "step": 0.05}),
-                "brightness": ("FLOAT", {"default": 1.0, "min": 0.00, "max": 2.0, "step": 0.05}),
+                "brightness": ("FLOAT", {"default": 1.0, "min": 0.00, "max": 10.0, "step": 0.05}),
             }
         }
         
