@@ -9,6 +9,6 @@ Repository = "https://github.com/souki202/ComfyUI-LoadImage-Advanced"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "souki202"
 DisplayName = "ComfyUI-LoadImage-Advanced"
-Icon = ""
+Icon = "https://totori-general-purpose-public.s3.ap-northeast-1.amazonaws.com/00063-222406234-400px.png"
