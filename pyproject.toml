@@ -2,7 +2,7 @@
 name = "comfyui-loadimage-advanced"
 description = "This is a node that simply integrates LoadImage, Vae Encode, and Upscale."
 version = "1.0.0"
-license = {file = "LICENSE"}
+license = {file = "LICENSE.txt"}
 
 [project.urls]
 Repository = "https://github.com/souki202/ComfyUI-LoadImage-Advanced"
