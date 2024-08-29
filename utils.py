@@ -2,6 +2,7 @@
 from copy import deepcopy
 import math
 from typing import List
+from nodes import ImageScale
 
 import numpy as np
 
@@ -22,3 +23,12 @@ def rotate_hue_vector(rgb_image: List[List[List[float]]], degree: int) -> List[L
                     [cos2 - n * sin, cos2 + n * sin, cos2 + cos]])
 
     return [[rot @ rgb for rgb in row] for row in rgb_image]
+
+def fixing_resolution(image, n, upscale_method):
+    if n <= 1:
+        return image
+    width = image.size(2)
+    height = image.size(1)
+    width = width + (n - width % n) if width % n != 0 else width
+    height = height + (n - height % n) if height % n != 0 else height
+    return (ImageScale().upscale(image, upscale_method, width, height, "disabled"))[0]

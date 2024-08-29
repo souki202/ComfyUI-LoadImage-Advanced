@@ -7,7 +7,7 @@ import os
 from PIL import Image, ImageEnhance
 
 from nodes import MAX_RESOLUTION, ImageScale, ImageScaleBy, LatentUpscaleBy, LoadImage, VAEEncode
-from .utils import rotate_hue_vector
+from .utils import fixing_resolution, rotate_hue_vector
 
 class LoadImageUpscaleBy:
     latent_upscale_methods = ["nearest-exact", "bilinear", "area", "bicubic", "bislerp"]
@@ -31,15 +31,21 @@ class LoadImageUpscaleBy:
 
                 "latent_upscale_method": (cls.latent_upscale_methods,),
                 "latent_scale_by": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 8.0, "step": 0.01}),
+
+                "resolution_factor": ("INT", {"default": 8, "min": 1, "max": 128, "step": 1}),
             }
         }
         
     CATEGORY = "image"
     RETURN_TYPES = ("LATENT", "IMAGE", "MASK")
     FUNCTION = "load_image"
-    def load_image(self, image, vae, image_upscale_method, image_scale_by, latent_upscale_method, latent_scale_by):
+    def load_image(self, image, vae, image_upscale_method, image_scale_by, latent_upscale_method, latent_scale_by, resolution_factor):
         (output_image, output_mask) = LoadImage().load_image(image)
         (upscaled_image,) = ImageScaleBy().upscale(output_image, image_upscale_method, image_scale_by) if image_scale_by != 1.0 else (output_image, )
+
+        if resolution_factor > 1:
+            upscaled_image = fixing_resolution(upscaled_image, resolution_factor, image_upscale_method)
+
         (latent,) = VAEEncode().encode(vae, upscaled_image)
         (upscaled_latent,) = LatentUpscaleBy().upscale(latent, latent_upscale_method, latent_scale_by) if latent_scale_by != 1.0 else (latent, )
         return (upscaled_latent, upscaled_image, output_mask)
@@ -66,15 +72,19 @@ class LoadImageUpscale:
                 "width": ("INT", {"default": 512, "min": 0, "max": MAX_RESOLUTION, "step": 1}),
                 "height": ("INT", {"default": 512, "min": 0, "max": MAX_RESOLUTION, "step": 1}),
                 "crop": (cls.crop_methods,),
+                "resolution_factor": ("INT", {"default": 8, "min": 1, "max": 128, "step": 1}),
             }
         }
         
     CATEGORY = "image"
     RETURN_TYPES = ("LATENT", "IMAGE", "MASK")
     FUNCTION = "load_image"
-    def load_image(self, image, vae, image_upscale_method, width, height, crop):
+    def load_image(self, image, vae, image_upscale_method, width, height, crop, resolution_factor):
         (output_image, output_mask) = LoadImage().load_image(image)
         (upscaled_image,) = ImageScale().upscale(output_image, image_upscale_method, width, height, crop)
+        
+        if resolution_factor > 1:
+            upscaled_image = fixing_resolution(upscaled_image, 16, image_upscale_method)
 
         (latent,) = VAEEncode().encode(vae, upscaled_image)
         return (latent, upscaled_image, output_mask)
