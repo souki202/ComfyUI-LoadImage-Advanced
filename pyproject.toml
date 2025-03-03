@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-loadimage-advanced"
 description = "This is a node that simply integrates LoadImage, Vae Encode, Upscale, Resolution factor correction, and Color Adjustment."
-version = "1.2.0"
+version = "1.2.1"
 license = {file = "LICENSE.txt"}
 
 [project.urls]

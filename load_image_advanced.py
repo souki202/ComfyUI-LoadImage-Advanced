@@ -12,15 +12,11 @@ from .utils import fixing_resolution, rotate_hue_vector
 class LoadImageUpscaleBy:
     latent_upscale_methods = ["nearest-exact", "bilinear", "area", "bicubic", "bislerp"]
     image_upscale_methods = ["nearest-exact", "bilinear", "area", "bicubic", "lanczos"]
-    
-    def __init__(self) -> None:
-        pass
 
     @classmethod
     def INPUT_TYPES(cls):
         input_dir = folder_paths.get_input_directory()
         files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
-
         return {
             "required": {
                 "vae": ("VAE", ),
@@ -49,6 +45,13 @@ class LoadImageUpscaleBy:
         (latent,) = VAEEncode().encode(vae, upscaled_image)
         (upscaled_latent,) = LatentUpscaleBy().upscale(latent, latent_upscale_method, latent_scale_by) if latent_scale_by != 1.0 else (latent, )
         return (upscaled_latent, upscaled_image, output_mask)
+    
+    @classmethod
+    def VALIDATE_INPUTS(s, image):
+        if not folder_paths.exists_annotated_filepath(image):
+            return "Invalid image file: {}".format(image)
+
+        return True
     
 class LoadImageUpscale:
     latent_upscale_methods = ["nearest-exact", "bilinear", "area", "bicubic", "bislerp"]
@@ -88,6 +91,13 @@ class LoadImageUpscale:
 
         (latent,) = VAEEncode().encode(vae, upscaled_image)
         return (latent, upscaled_image, output_mask)
+    
+    @classmethod
+    def VALIDATE_INPUTS(s, image):
+        if not folder_paths.exists_annotated_filepath(image):
+            return "Invalid image file: {}".format(image)
+
+        return True
 
 class ColorAdjustment:
     def __init__(self) -> None:
